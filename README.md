@@ -22,10 +22,15 @@ A tech blog built with Hugo, focused on technology, engineering skills, leadersh
 
 ### Setup
 
-1. Clone the repository:
+1. Clone the repository with submodules:
 ```bash
-git clone <repository-url>
+git clone --recurse-submodules <repository-url>
 cd lost-page-blog
+```
+
+**If you already cloned without submodules:**
+```bash
+git submodule update --init --recursive
 ```
 
 2. Install Hugo Extended v0.152.2 or later:
@@ -206,6 +211,39 @@ def hello():
 \`\`\`
 
 Configured with line numbers and the Monokai color scheme.
+
+## Troubleshooting
+
+### Updating the Theme
+
+The PaperMod theme is managed as a git submodule. To update to the latest version:
+
+```bash
+git submodule update --remote themes/PaperMod
+```
+
+### Missing Theme After Clone
+
+If you cloned the repository and the `themes/PaperMod` directory is empty, initialize the submodule:
+
+```bash
+git submodule update --init --recursive
+```
+
+### Build Errors Related to Theme
+
+If Hugo can't find the theme, verify the submodule is properly initialized:
+
+```bash
+git submodule status
+# Should show: <commit-hash> themes/PaperMod (heads/master)
+```
+
+If it shows a `-` prefix, the submodule isn't initialized. Run:
+
+```bash
+git submodule update --init --recursive
+```
 
 ## License
 

@@ -5,7 +5,8 @@
       "Bash(tree:*)",
       "Bash(openspec validate:*)",
       "Bash(openspec show:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(openspec archive enable-social-profile-links:*)"
     ],
     "deny": [],
     "ask": []

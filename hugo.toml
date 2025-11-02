@@ -58,6 +58,11 @@ theme = 'PaperMod'
   #   name = "x"
   #   url = "https://x.com/your-username"
 
+  # Home Info Mode
+  [params.homeInfoParams]
+    Title = "Welcome to Lost Page Blog"
+    Content = "A tech blog about technology, engineering, leadership, and team topics"
+
   # Search
   [params.fuseOpts]
     isCaseSensitive = false

@@ -4,15 +4,24 @@
 TBD - created by archiving change add-blog-foundation. Update Purpose after archive.
 ## Requirements
 ### Requirement: GitHub Actions Workflow
-The system SHALL use GitHub Actions to automatically build and deploy the site.
+The system SHALL use GitHub Actions to automatically build and deploy the site with optimized caching and conditional triggers.
 
-#### Scenario: Workflow triggered on push
-- **WHEN** changes are pushed to the main branch
+#### Scenario: Workflow triggered only on site changes
+- **WHEN** changes are pushed to the main branch affecting site content (content/, themes/, config files, static assets)
 - **THEN** GitHub Actions automatically builds and deploys the site
+- **AND** changes to non-site files (openspec/, documentation) do not trigger deployment
 
-#### Scenario: Build on pull request
-- **WHEN** a pull request is created
-- **THEN** a preview build is generated for review
+#### Scenario: Hugo CLI installation cached
+- **WHEN** the workflow runs and Hugo is already cached
+- **THEN** the cached Hugo CLI is restored instead of being downloaded again
+
+#### Scenario: Dart Sass installation cached
+- **WHEN** the workflow runs and Dart Sass is already cached
+- **THEN** the cached Dart Sass is restored instead of being installed again
+
+#### Scenario: npm dependencies cached
+- **WHEN** the workflow runs and package-lock.json hasn't changed
+- **THEN** cached node_modules are restored instead of running npm ci
 
 ### Requirement: Hugo Build Process
 The system SHALL build the static site using Hugo with appropriate configuration.
@@ -55,9 +64,13 @@ The system SHALL provide clear status and logs for deployments.
 - **THEN** GitHub Actions shows failure status with error logs
 
 ### Requirement: Fast Deployment
-The system SHALL complete builds and deployments in under 5 minutes for typical blog sizes.
+The system SHALL complete builds and deployments efficiently using caching for improved performance.
 
-#### Scenario: Quick deployment cycle
-- **WHEN** changes are pushed
-- **THEN** the updated site is live within 5 minutes
+#### Scenario: Cached build performance
+- **WHEN** dependencies are cached and no breaking changes exist
+- **THEN** build time is reduced by at least 30% compared to uncached builds
+
+#### Scenario: Hugo build cache utilized
+- **WHEN** Hugo builds the site
+- **THEN** Hugo's internal cache is used across workflow runs for faster incremental builds
 

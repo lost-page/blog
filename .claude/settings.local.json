@@ -4,7 +4,8 @@
       "Bash(openspec list:*)",
       "Bash(tree:*)",
       "Bash(openspec validate:*)",
-      "Bash(openspec show:*)"
+      "Bash(openspec show:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

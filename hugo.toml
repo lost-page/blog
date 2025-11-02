@@ -1,0 +1,90 @@
+baseURL = 'https://username.github.io/lost-page-blog/'
+languageCode = 'en-us'
+title = 'Lost Page Blog'
+theme = 'PaperMod'
+
+# Pagination
+[pagination]
+  pagerSize = 10
+
+# Enable syntax highlighting
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ''
+    hl_inline = false
+    lineAnchors = ''
+    lineNoStart = 1
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = false
+    noHl = false
+    style = 'monokai'
+    tabWidth = 4
+
+# RSS Feed configuration
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+
+# Taxonomies (tags and categories)
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+# Site parameters
+[params]
+  description = "A tech blog about technology, engineering, leadership, and team topics"
+  author = "Blog Author"
+
+  # Theme-specific parameters
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowRssButtonInSectionTermList = true
+  ShowToc = true
+
+  # Search
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.4
+    minMatchCharLength = 0
+    keys = ["title", "permalink", "summary", "content"]
+
+# Menu configuration
+[[menus.main]]
+  name = "Home"
+  url = "/"
+  weight = 1
+
+[[menus.main]]
+  name = "Posts"
+  url = "/posts/"
+  weight = 2
+
+[[menus.main]]
+  name = "Tags"
+  url = "/tags/"
+  weight = 3
+
+[[menus.main]]
+  name = "Categories"
+  url = "/categories/"
+  weight = 4
+
+[[menus.main]]
+  name = "About"
+  url = "/about/"
+  weight = 5
+
+[[menus.main]]
+  name = "Search"
+  url = "/search/"
+  weight = 6

@@ -51,6 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.152.2
+      DART_SASS_VERSION: 1.93.3
     steps:
       # Cache Hugo CLI binary to avoid repeated downloads
       # Cache key: based on Hugo version - invalidates when version changes
@@ -70,19 +71,19 @@ jobs:
         run: sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       # Cache Dart Sass binary to avoid repeated downloads
-      # Cache key: based on OS - uses fixed version for stability
+      # Cache key: based on Dart Sass version - invalidates when version changes
       - name: Cache Dart Sass
         uses: actions/cache@v4
         id: cache-dart-sass
         with:
           path: /home/runner/dart-sass
-          key: dart-sass-embedded-${{ runner.os }}
+          key: dart-sass-${{ env.DART_SASS_VERSION }}-${{ runner.os }}
 
       - name: Install Dart Sass
         if: steps.cache-dart-sass.outputs.cache-hit != 'true'
         run: |
-          curl -LJO https://github.com/sass/dart-sass/releases/download/1.77.6/dart-sass-1.77.6-linux-x64.tar.gz
-          tar -xf dart-sass-1.77.6-linux-x64.tar.gz -C /home/runner
+          curl -LJO https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz
+          tar -xf dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz -C /home/runner
 
       - name: Add Dart Sass to PATH
         run: echo "/home/runner/dart-sass" >> $GITHUB_PATH

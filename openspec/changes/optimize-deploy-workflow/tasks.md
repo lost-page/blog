@@ -18,11 +18,12 @@
 - [x] 3. **Add Dart Sass caching**
    - Added `actions/cache@v4` step before "Install Dart Sass"
    - Switched from snap to direct download for better caching
-   - Cache key: `dart-sass-embedded-${{ runner.os }}`
+   - Added DART_SASS_VERSION environment variable (1.93.3)
+   - Cache key: `dart-sass-${{ env.DART_SASS_VERSION }}-${{ runner.os }}`
    - Cache path: `/home/runner/dart-sass`
    - Conditionally skips download if cache hit
    - Added PATH configuration step
-   - Ready for testing in workflow runs
+   - Fixed: Corrected version from non-existent 1.77.6 to valid 1.93.3
 
 - [x] 4. **Add npm dependencies caching**
    - Added `actions/cache@v4` step before "Install Node.js dependencies"

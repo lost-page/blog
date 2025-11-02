@@ -48,6 +48,16 @@ theme = 'PaperMod'
   ShowRssButtonInSectionTermList = true
   ShowToc = true
 
+  # Social Icons
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/nathan-barton-325b83251/"
+
+  # Uncomment when X account is ready:
+  # [[params.socialIcons]]
+  #   name = "x"
+  #   url = "https://x.com/your-username"
+
   # Search
   [params.fuseOpts]
     isCaseSensitive = false

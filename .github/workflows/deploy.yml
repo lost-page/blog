@@ -1,10 +1,29 @@
 name: Deploy site to Pages
 
+# This workflow builds and deploys a Hugo site to GitHub Pages with optimizations:
+# - Smart path filtering: only triggers on actual site content changes
+# - Multi-layer caching: Hugo CLI, Dart Sass, npm dependencies, and Hugo build cache
+# - Cache invalidation: automatic based on dependency versions and content hashes
+
 on:
   # Runs on pushes targeting the default branch
   push:
     branches:
       - master
+    paths:
+      # Include site content and configuration
+      - 'content/**'
+      - 'themes/**'
+      - 'static/**'
+      - 'layouts/**'
+      - 'assets/**'
+      - 'data/**'
+      - 'archetypes/**'
+      - 'config.toml'
+      - 'config.yaml'
+      - 'hugo.toml'
+      - 'hugo.yaml'
+      - '.github/workflows/deploy.yml'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -33,13 +52,40 @@ jobs:
     env:
       HUGO_VERSION: 0.152.2
     steps:
+      # Cache Hugo CLI binary to avoid repeated downloads
+      # Cache key: based on Hugo version - invalidates when version changes
+      - name: Cache Hugo CLI
+        uses: actions/cache@v4
+        id: cache-hugo
+        with:
+          path: ${{ runner.temp }}/hugo.deb
+          key: hugo-${{ env.HUGO_VERSION }}-linux-amd64
+
       - name: Install Hugo CLI
+        if: steps.cache-hugo.outputs.cache-hit != 'true'
         run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+
+      - name: Install Hugo from cache or download
+        run: sudo dpkg -i ${{ runner.temp }}/hugo.deb
+
+      # Cache Dart Sass binary to avoid repeated downloads
+      # Cache key: based on OS - uses fixed version for stability
+      - name: Cache Dart Sass
+        uses: actions/cache@v4
+        id: cache-dart-sass
+        with:
+          path: /home/runner/dart-sass
+          key: dart-sass-embedded-${{ runner.os }}
 
       - name: Install Dart Sass
-        run: sudo snap install dart-sass
+        if: steps.cache-dart-sass.outputs.cache-hit != 'true'
+        run: |
+          curl -LJO https://github.com/sass/dart-sass/releases/download/1.77.6/dart-sass-1.77.6-linux-x64.tar.gz
+          tar -xf dart-sass-1.77.6-linux-x64.tar.gz -C /home/runner
+
+      - name: Add Dart Sass to PATH
+        run: echo "/home/runner/dart-sass" >> $GITHUB_PATH
 
       - name: Checkout
         uses: actions/checkout@v5
@@ -51,8 +97,32 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
+      # Cache npm dependencies to speed up builds
+      # Cache key: based on package-lock.json hash - invalidates when dependencies change
+      # Restore keys: allow partial matches for faster initial cache population
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        id: cache-npm
+        with:
+          path: node_modules
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+
       - name: Install Node.js dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+
+      # Cache Hugo's internal build cache for faster incremental builds
+      # Cache key: based on content and theme hashes - invalidates when these change
+      # Restore keys: allow reuse of cache even with minor content changes
+      - name: Cache Hugo build
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/hugo_cache
+          key: hugo-build-${{ runner.os }}-${{ hashFiles('content/**', 'themes/**') }}
+          restore-keys: |
+            hugo-build-${{ runner.os }}-
 
       - name: Build with Hugo
         env:
